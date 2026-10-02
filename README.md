@@ -96,31 +96,10 @@ flowchart LR
 Create a `.env` or `.env.local` file in the root directory:
 
 ```env
-VITE_API_BASE_URL=[https://your-backend-api.com](https://your-backend-api.com)
+VITE_API_BASE_URL=https://your-backend-api.com
 ```
 
 ## Key Technical Decisions
-
-<This is the section that actually differentiates you for senior/lead
-roles. Pick 2-4 real decisions with their reasoning, not just "what" but
-"why" and what you considered/discarded. Candidates from what I know:>
-
-- **Form state via a custom reducer hook (`useReclamoForm`)** instead of
-  a form library — why, and what trade-off that implied
-- **Tiptap + custom document-to-PDF pipeline** — why Tiptap, how the modal
-  dialog and the reducer stay in sync bidirectionally
-- **Onboarding tour: migrated from react-joyride to driver.js** — the
-  React 19 incompatibility you hit, and why driver.js was the fix
-- Any other non-obvious call worth explaining
-
-x
-
-- La app prioriza simplicidad operativa y usa stores en módulos para un contexto de negocio pequeño.
-- La capa de repositorios hace que los CRUD y las consultas se vuelvan reutilizables.
-- El sistema de validación y UI está fuertemente acoplado a componentes por entidad, lo que facilita el desarrollo rápido pero exige disciplina para evitar duplicación de lógica.
-- La presencia de `driver.js` y `localStorage` para onboarding sugiere una experiencia guiada y no puramente declarativa.
-
-.
 
 ### 1. Form State via Custom Reducer Hook (`useReclamoForm`)
 * **The "Why"**: The *Reclamos* module is the core domain of the platform. The form is highly domain-specific, featuring interdependent steps, conditional logic, dynamic document templates, and contextual validations. Instead of adding a heavy form library (e.g., `react-hook-form` or `formik`), a custom `useReducer` hook (`useReclamoForm`) was chosen to centralize complex state transitions into predictable, unit-testable action dispatches (`SET_FIELD`, `SUBMIT_START`, `SET_ERRORS`).
@@ -128,9 +107,10 @@ x
 
 ### 2. Tiptap + Custom Document-to-PDF Pipeline
 * **Why Tiptap**: Claim processing requires dynamic legal/administrative document generation. Tiptap (headless, built on ProseMirror) was selected because it decoupled rich text editing logic from UI constraints, making it easy to seamlessly embed custom placeholders, metadata tokens, and structured document structures into the editor.
-* **Unidirectional Sync (Document ➔ `useReclamoForm`)**:
-  1. **Editor to Form**: Any manual text edits or template overrides executed inside the Tiptap trigger `onUpdate` callbacks, which dispatch actions back to `useReclamoForm` to sync the document's HTML/JSON payload into the global form payload before submitting.
-* **PDF Pipeline**: Once verified, the document string is converted to PDF using a dedicated server/client generation strategy that preserves formatting without breaking layout fidelity.
+* **Unidirectional Sync (Document ➔ `useReclamoForm`)**: 
+  * The integration between the Tiptap editor and the form reducer operates **unidirectionally**. 
+  * The Tiptap editor serves as the primary authoring workspace for the claim content. As the user edits or formats the document, Tiptap's `onUpdate` callbacks extract the HTML/JSON content payload and dispatch actions to `useReclamoForm` to keep the global form state updated and ready for submission.
+* **PDF Pipeline**: Once verified, the document string is used to generate a PDF document using a dedicated server/client generation strategy that preserves formatting without breaking layout fidelity.
 
 ### 3. Onboarding Tour: Migration from `react-joyride` to `driver.js`
 * **The React 19 Compatibility Wall**: `react-joyride` (and its underlying dependency `react-floater`) relied on legacy React internals and lifecycle methods that failed or produced runtime crashes/warnings when upgrading the project to React 19.
@@ -140,6 +120,7 @@ x
 ### 4. Other Non-Obvious Architecture Choices
 * **Entity Repositories over Direct Fetching**: API interaction is encapsulated within dedicated repository modules per entity (e.g., `ReclamosRepository`, `ConciliacionesRepository`). This decouples data fetching, caching, and transformation from React UI components, keeping CRUD operations reusable and dry across different views.
 * **Entity-Coupled Validation Components**: Validation rules and UI inputs are tightly bound to domain entity components. While this optimized rapid iteration and direct feature building, it relies on disciplined repository patterns to prevent business logic duplication across forms.
+
 
 ## Features
 
