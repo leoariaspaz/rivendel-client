@@ -1,4 +1,4 @@
-# <Project Name> — Frontend
+# Conciliaciones — Frontend
 
 Client for labor claim conciliators.
 
@@ -8,16 +8,10 @@ Client for labor claim conciliators.
 
 ## Overview
 
-This application is a client for labor claim conciliators, who manage
-claims, the parties involved, and the sponsoring counsels representing
-each party. Each claim involves two parties: the claimant and the
-respondent, each of which may be represented by a sponsoring counsel.
-The system also handles user credentials and can optionally synchronize
-events with Google Calendar.
+This application is a client for labor claim conciliators, who manage claims, the parties involved, and the sponsoring counsels representing each party. Each claim involves two parties: the claimant and the respondent, each of which may be represented by a sponsoring counsel.
+The system also handles user credentials and can optionally synchronize events with Google Calendar.
 
-The visible functional domain on the UI can be summarized in the
-following areas:
-
+The visible functional domain on the UI can be summarized in the following areas:
 - Authentication and session
 - Registration of sponsoring counsels
 - Registration of claim parties (respondents and claimants)
@@ -216,10 +210,7 @@ pnpm install
 ```
 
 ### Environment Variables
-VITE_API_URL=
-VITE_GOOGLE_CLIENT_ID=
-...
-
+`VITE_BACKEND_URL=`
 
 ### Running locally
 ```bash
@@ -228,19 +219,12 @@ pnpm dev
 
 ## Testing
 
-The test suite (58 files) covers three levels, all run with **Vitest** in a
-`jsdom` environment:
+The test suite (58 files) covers three levels, all run with **Vitest** in a `jsdom` environment:
+- **Unit tests:** functions, utilities, stores, services and repositories, tested in isolation.
+- **Component tests:** React components and hooks via Testing Library, including forms, routes and dialogs.
+- **UI integration tests:** interactions between components and in-app flows; repositories/API calls are mocked, so these don't hit the real  backend.
 
-- **Unit tests:** functions, utilities, stores, services and repositories,
-  tested in isolation.
-- **Component tests:** React components and hooks via Testing Library,
-  including forms, routes and dialogs.
-- **UI integration tests:** interactions between components and in-app
-  flows; repositories/API calls are mocked, so these don't hit the real
-  backend.
-
-There's currently no E2E suite (e.g. Playwright/Cypress) running against a
-real browser.
+There's currently no E2E suite (e.g. Playwright/Cypress) running against a real browser.
 
 **Coverage:** 86% statements · 82% functions · 86% lines · 75% branches
 
@@ -252,12 +236,24 @@ pnpm test -- --coverage   # generate coverage report
 
 ## Related Repository
 
-This is the frontend half of a full-stack project. Backend (NestJS +
-Prisma + MySQL): [link]
+This is the frontend half of a full-stack project. [Backend](https://github.com/leoariaspaz/rivendel) (NestJS + Prisma + MySQL). 
 
 ## Roadmap
 
-<2-4 bullets — shows product thinking beyond "it works">
+These items are out of scope for the current MVP but represent natural next steps for the product:
+
+- **ARCA invoicing for settlement agreements processed in a given period**
+  - Requires linking the user's account to their ARCA account (ARCA is Argentina's federal tax collection agency)
+  - Each conciliation — whether settled or failed — has an associated amount based on its resolution type
+  - Each claim included in an invoice should be marked as processed, with the related invoice number attached
+  - Generated invoices should be stored, including invoice number, date, total amount, and description
+
+- **Document management for conciliation-related files**
+  - Sponsoring counsels and their parties submit documentation related to the conciliation, such as powers of attorney, salary settlement statements, and formal notices (telegrams)
+  - This documentation could be stored in Google Drive folders linked to the corresponding claim
+  - This would require linking the user's account to their Google Drive
+
+- **Increase coverage of the existing test suite and add E2E tests**
 
 ## License
 
