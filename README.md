@@ -117,14 +117,29 @@ VITE_API_BASE_URL=https://your-backend-api.com
 * **The Fix (`driver.js`)**: `driver.js` is framework-agnostic, lightweight, and operates directly on DOM elements rather than forcing deep React fiber integration. By wrapping `driver.js` in a lightweight custom React hook, the application achieved flawless element highlighting, step popovers, and smooth tour progression under React 19 with zero compatibility overhead.
 * **Persistence via `localStorage`**: To keep the onboarding non-intrusive, completed or dismissed tours persist flag markers in `localStorage`, allowing user-guided interactive tours without storing UI tour state on the database.
 
-### 4. Other Non-Obvious Architecture Choices
+### 4. Dynamic PDF Generation for Claim Resolutions
+* **The "Why"**: Settlement and failure documents can't be generated from a single static template. Content and layout must adapt to the resolution type and to the number and type of parties involved in each claim, since a claim may resolve with one or several claimants and respondents, each requiring their own section in the document.
+* **Conditional Signature Lines**: The PDF footer renders a signature line per party, but only when that party is physically present at the hearing. A party is considered absent — and excluded from the signature line — if either a WhatsApp number is registered for them or the *"Incomparece"* (non-appearance) checkbox is checked; the signature line appears only when neither condition is met. This keeps the generated document legally accurate without requiring a separate "attendance" data model.
+* **Pipeline**: Once the claim data and document content are validated, they're passed through a dedicated server/client generation strategy (see Tiptap integration above) that assembles the correct template variant and preserves formatting without breaking layout fidelity.
+
+### 5. Other Non-Obvious Architecture Choices
 * **Entity Repositories over Direct Fetching**: API interaction is encapsulated within dedicated repository modules per entity (e.g., `ReclamosRepository`, `ConciliacionesRepository`). This decouples data fetching, caching, and transformation from React UI components, keeping CRUD operations reusable and dry across different views.
 * **Entity-Coupled Validation Components**: Validation rules and UI inputs are tightly bound to domain entity components. While this optimized rapid iteration and direct feature building, it relies on disciplined repository patterns to prevent business logic duplication across forms.
 
 
 ## Features
 
-- <bullet list of user-facing features>
+- User authentication and session management
+- Registration and management of claim parties (claimants and respondents) and their sponsoring counsels
+- Creation and tracking of labor claims, each with one or more claimants and respondents
+- Drafting of settlement clauses for conciliation agreements
+- PDF generation of claim resolutions, with document format and content
+  adapted to the resolution type and the parties involved
+- User profile and account settings
+- Google Calendar synchronization for scheduling conciliation hearings
+- Backend offline detection with automatic recovery
+- Guided tour of the main sections
+
 
 ## Project Structure
 src/
@@ -160,20 +175,6 @@ VITE_GOOGLE_CLIENT_ID=
 pnpm dev
 ```
 
-## Related Repository
-
-This is the frontend half of a full-stack project. Backend (NestJS +
-Prisma + MySQL): [link]
-
-## Roadmap
-
-<2-4 bullets — shows product thinking beyond "it works">
-
-## License
-
-This project is publicly available for viewing and educational purposes only.
-No permission is granted to use, modify, or distribute this code without explicit authorization.
-
 ## Testing
 
 The test suite (58 files) covers three levels, all run with **Vitest** in a
@@ -197,3 +198,17 @@ pnpm test           # run once
 pnpm test:watch     # watch mode
 pnpm test -- --coverage   # generate coverage report
 ```
+
+## Related Repository
+
+This is the frontend half of a full-stack project. Backend (NestJS +
+Prisma + MySQL): [link]
+
+## Roadmap
+
+<2-4 bullets — shows product thinking beyond "it works">
+
+## License
+
+This project is publicly available for viewing and educational purposes only.
+No permission is granted to use, modify, or distribute this code without explicit authorization.
