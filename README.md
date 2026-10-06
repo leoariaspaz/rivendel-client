@@ -142,15 +142,66 @@ VITE_API_BASE_URL=https://your-backend-api.com
 
 
 ## Project Structure
-src/
-components/
-hooks/
-...
 
-
-<Short explanation of the convention — especially anything a reviewer
-needs to know to navigate the code, like where the reducer/dialog
-communication lives.>
+```text
+rivendel-client/
+├─ docs/                                  # Technical documentation
+├─ public/                                # Static assets
+├─ src/
+│  ├─ api/                                # HTTP / repositories
+│  │  ├─ repositories/                   # Entities: parties, sponsoring counsels, claims, users, health, calendar
+│  │  ├─ auth.repository.js              # Login, refresh, logout
+│  │  ├─ constants.js                   # Global backend configuration
+│  │  ├─ http.js                        # axios authHttp/publicHttp instances
+│  │  ├─ interceptors.js                # JWT + refresh + backend status
+│  │  └─ *.test.js                     # API/repository tests
+│  ├─ auth/                              # Session initialization
+│  │  ├─ auth.bootstrap.js              # Auth bootstrap on app start
+│  │  ├─ auth.service.js                 # Stores/clears token and profile
+│  │  └─ *.test.js
+│  ├─ components/
+│  │  ├─ AppGate/                       # Backend status gate
+│  │  ├─ Auth/                          # Route guards
+│  │  ├─ ClausulasAcuerdo/              # Settlement clause editor and templates
+│  │  ├─ GoogleCalendar/                # Google Calendar OAuth connection
+│  │  ├─ Grid/                          # Reusable listing and pagination
+│  │  ├─ Layout/                        # Shell, nav, onboarding tour
+│  │  ├─ Login/                         # Login form and handlers
+│  │  ├─ Partes/                        # Claim parties CRUD
+│  │  ├─ Patrocinantes/                 # Sponsoring counsels CRUD
+│  │  ├─ Reclamos/                      # Claims CRUD and settlement records
+│  │  ├─ SearchDialog/                  # General-purpose search
+│  │  ├─ Shared/                       # Wrappers, icons, validation, base layout
+│  │  └─ Users/                        # User profile
+│  ├─ contexts/
+│  │  ├─ Constants.jsx                  # Global contexts
+│  │  ├─ BackendStatusProvider.jsx      # Backend status
+│  │  └─ NotificationProvider.jsx       # Centralized toast notifications
+│  ├─ dtos/
+│  │  ├─ token.js                       # In-memory token
+│  │  └─ userName.js                    # In-memory username
+│  ├─ stores/
+│  │  ├─ auth-status.js                 # Authenticated state
+│  │  ├─ auth-resolution.js             # Initial auth resolution
+│  │  ├─ backend-status.js             # Server status
+│  │  ├─ calendar.js                   # Google Calendar state
+│  │  └─ *.test.js
+│  ├─ utils/
+│  │  └─ navigation.js                  # Safe navigation for redirects
+│  ├─ App.jsx                          # Main login entry point
+│  ├─ main.jsx                         # App bootstrap and routes
+│  ├─ setupTests.js                    # Global test configuration
+│  └─ index.css                        # Global CSS
+├─ .env.local / .env.production         # Environment variables
+├─ eslint.config.js                     # ESLint
+├─ index.html                           # Vite base HTML
+├─ package.json                         # Scripts and dependencies
+├─ pnpm-lock.yaml                       # Lockfile
+├─ vite.config.js                       # Build and test config
+├─ README.md                            # Project documentation (this file)
+├─ vercel.json                           # Deployment config
+└─ test.sh                              # Project validation script
+```
 
 ## Getting Started
 
