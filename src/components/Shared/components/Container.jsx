@@ -1,15 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FILEEARMARKPLUS } from "./Icons";
 import { useMemo } from "react";
+import { getCurrentRouteTitle } from "./pageTitleConfig.js";
 
 const Container = ({children, title = "", pathToNew}) => {
+	const location = useLocation();
 	const headerTitle = useMemo(() => {
 		if (title) return title;
-		const pageTitle = document.title;
-		return pageTitle.includes("|")
-			? pageTitle.substring(0, pageTitle.indexOf("|")).trim()
-			: pageTitle;
-	}, [title])
+		return getCurrentRouteTitle(location.pathname);
+	}, [location.pathname, title]);
 
 	return (
 		<div className="container mt-4">
