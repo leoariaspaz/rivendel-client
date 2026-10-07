@@ -7,7 +7,17 @@ Client for labor claim conciliators.
 
 [Try the live demo](https://conciliaciones-demo.vercel.app/) — demo credentials available on request (reach out via [LinkedIn](https://www.linkedin.com/in/leonardo-arias-paz)).
 
-![screenshot or GIF]
+<p align="center">
+  <img src="./docs/images/reclamos-listing.png" width="600" alt="Claim listing">
+  <br/>
+  Reclamos listing
+  <br/>
+  <br/>
+  <img src="./docs/images/reclamos-edition.png" width="600" alt="Claim edition">
+  <br/>
+  Reclamos edition
+</p>
+
 
 ## Overview
 
