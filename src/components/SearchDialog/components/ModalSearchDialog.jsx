@@ -13,6 +13,7 @@ export default function ModalSearchDialog({
 	onAccept,
 	onCancel,
 	minTermLength = 3,
+	debounceMs = 300,
 	emptyMessage = "No hay datos para mostrar.",
 	visible = true
 }) {
@@ -20,7 +21,7 @@ export default function ModalSearchDialog({
 	const inputRef = useRef(null);
 
 	const {term, data, selected, selectedId, done, error, loading,
-		setTerm, selectRow, buscar} = useSearchDialog(searchFn, inputRef, { minTermLength });
+		setTerm, selectRow, buscar} = useSearchDialog(searchFn, inputRef, { minTermLength, debounceMs });
 
 
 	const contentClassName = error
