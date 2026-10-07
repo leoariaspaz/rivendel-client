@@ -1,8 +1,11 @@
 # Conciliaciones — Frontend
 
 Client for labor claim conciliators.
+[Backend repo](https://github.com/leoariaspaz/rivendel) · [Case study](<url>)
 
-[Live Demo](<url>) · [Backend repo](https://github.com/leoariaspaz/rivendel) · [Case study](<url>)
+## Live Demo
+
+[Try the live demo](https://conciliaciones-demo.vercel.app/) — demo credentials available on request (reach out via [LinkedIn](https://www.linkedin.com/in/leonardo-arias-paz)).
 
 ![screenshot or GIF]
 
@@ -120,10 +123,10 @@ VITE_API_BASE_URL=https://your-backend-api.com
 * **Entity Repositories over Direct Fetching**: API interaction is encapsulated within dedicated repository modules per entity (e.g., `ReclamosRepository`, `ConciliacionesRepository`). This decouples data fetching, caching, and transformation from React UI components, keeping CRUD operations reusable and dry across different views.
 * **Entity-Coupled Validation Components**: Validation rules and UI inputs are tightly bound to domain entity components. While this optimized rapid iteration and direct feature building, it relies on disciplined repository patterns to prevent business logic duplication across forms.
 
-
 ## Features
 
 - User authentication and session management
+- Multi-user support, with each conciliator managing their own claims, parties, and counsels independently
 - Registration and management of claim parties (claimants and respondents) and their sponsoring counsels
 - Creation and tracking of labor claims, each with one or more claimants and respondents
 - Drafting of settlement clauses for conciliation agreements
@@ -133,7 +136,6 @@ VITE_API_BASE_URL=https://your-backend-api.com
 - Google Calendar synchronization for scheduling conciliation hearings
 - Backend offline detection with automatic recovery
 - Guided tour of the main sections
-
 
 ## Project Structure
 
@@ -242,18 +244,20 @@ This is the frontend half of a full-stack project. [Backend](https://github.com/
 
 These items are out of scope for the current MVP but represent natural next steps for the product:
 
-- **ARCA invoicing for settlement agreements processed in a given period**
-  - Requires linking the user's account to their ARCA account (ARCA is Argentina's federal tax collection agency)
-  - Each conciliation — whether settled or failed — has an associated amount based on its resolution type
-  - Each claim included in an invoice should be marked as processed, with the related invoice number attached
-  - Generated invoices should be stored, including invoice number, date, total amount, and description
+- ARCA invoicing for settlement agreements processed in a given period.
+  - Requires linking the user's account to their ARCA account (ARCA is Argentina's federal tax collection agency).
+  - Each conciliation — whether settled or failed — has an associated amount based on its resolution type.
+  - Each claim included in an invoice should be marked as processed, with the related invoice number attached.
+  - Generated invoices should be stored, including invoice number, date, total amount, and description.
 
-- **Document management for conciliation-related files**
-  - Sponsoring counsels and their parties submit documentation related to the conciliation, such as powers of attorney, salary settlement statements, and formal notices (telegrams)
-  - This documentation could be stored in Google Drive folders linked to the corresponding claim
-  - This would require linking the user's account to their Google Drive
+- Document management for conciliation-related files.
+  - Sponsoring counsels and their parties submit documentation related to the conciliation, such as powers of attorney, salary settlement statements, and formal notices (telegrams).
+  - This documentation could be stored in Google Drive folders linked to the corresponding claim.
+  - This would require linking the user's account to their Google Drive.
 
-- **Increase coverage of the existing test suite and add E2E tests**
+- Increase coverage of the existing test suite and add E2E tests.
+
+- Add caching (e.g. Redis) for database queries.
 
 ## License
 
