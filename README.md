@@ -10,12 +10,12 @@ Client for labor claim conciliators.
 <p align="center">
   <img src="./docs/images/reclamos-listing.png" width="600" alt="Claim listing">
   <br/>
-  Reclamos listing
+  Claim listing
   <br/>
   <br/>
   <img src="./docs/images/reclamos-edition.png" width="600" alt="Claim edition">
   <br/>
-  Reclamos edition
+  Claim editing
 </p>
 
 
