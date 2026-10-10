@@ -18,7 +18,6 @@ Client for labor claim conciliators.
   Claim editing
 </p>
 
-
 ## Overview
 
 This application is a client for labor claim conciliators, who manage claims, the parties involved, and the sponsoring counsels representing each party. Each claim involves two parties: the claimant and the respondent, each of which may be represented by a sponsoring counsel.
@@ -56,7 +55,7 @@ flowchart LR
       web["🌐 Website"]
   end
 
-  subgraph backend["<div style='font-size:20px; font-weight:bold; margin-top:10px;'>Backend</div>"]
+  subgraph backend["<div style='font-size:20px; margin-top:10px;'>Backend</div>"]
       api["⚙️ API Server"]
       subgraph services["Servicios / Integraciones"]
           bank["🏦 Bank"]
@@ -71,16 +70,17 @@ flowchart LR
   api --> google
 
 %% Estilos de alto contraste
-    style frontend fill:##d8ebdd,stroke:green,stroke-width:2px
-    style backend fill:#dcdcdc,stroke:#000,stroke-width:1px
-    style services fill:#dcdcdc,stroke:#000,stroke-width:1px
-    style web fill:#ffffff,stroke:#333,stroke-width:2px
-    style api fill:#d0d0d0,stroke:#333,stroke-width:2px
-    style bank fill:#d0d0d0,stroke:#333,stroke-width:1px
-    style db fill:#d0d0d0,stroke:#333,stroke-width:1px
-    style google fill:#d0d0d0,stroke:#333,stroke-width:1px
+    style frontend fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    style backend fill:#f1f5f9,stroke:#64748b,stroke-width:1px
+    style services fill:#f1f5f9,stroke:#64748b,stroke-width:1px
+    
+    style web fill:#c8e6c9,stroke:#388e3c,stroke-width:2px
+    style api fill:#ffffff,stroke:#64748b,stroke-width:1px
+    style bank fill:#ffffff,stroke:#64748b,stroke-width:1px
+    style db fill:#ffffff,stroke:#64748b,stroke-width:1px
+    style google fill:#ffffff,stroke:#64748b,stroke-width:1px
 
-    linkStyle default stroke:#2b6cb0,stroke-width:2px;
+    linkStyle default stroke:#0288d1,stroke-width:2px;
 ```
 
 ## Backend Communication & Authentication
