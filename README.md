@@ -8,12 +8,12 @@ Client for labor claim conciliators.
 [Try the live demo](https://conciliaciones-demo.vercel.app/) — demo credentials available on request (reach out via [LinkedIn](https://www.linkedin.com/in/leonardo-arias-paz)).
 
 <p align="center">
-  <img src="./docs/images/reclamos-listing.png" width="600" alt="Claim listing">
+  <img src="./doc/images/reclamos-listing.png" width="600" alt="Claim listing">
   <br/>
   Claim listing
   <br/>
   <br/>
-  <img src="./docs/images/reclamos-edition.png" width="600" alt="Claim edition">
+  <img src="./doc/images/reclamos-edition.png" width="600" alt="Claim edition">
   <br/>
   Claim editing
 </p>
@@ -151,7 +151,7 @@ VITE_API_BASE_URL=https://your-backend-api.com
 
 ```text
 rivendel-client/
-├─ docs/                                  # Technical documentation
+├─ doc/                                  # Technical documentation
 ├─ public/                                # Static assets
 ├─ src/
 │  ├─ api/                                # HTTP / repositories
