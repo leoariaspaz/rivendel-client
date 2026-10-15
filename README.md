@@ -1,6 +1,6 @@
 # Conciliaciones — Frontend
 
-Client for labor claim conciliators.
+Client for Rivendel, a case management platform for labor conciliators designated under DICLO (Dirección de Conciliación Laboral Obligatoria) in Santiago del Estero, Argentina.
 [Backend repo](https://github.com/leoariaspaz/rivendel) · [Case study](<url>)
 
 ## Live Demo
@@ -86,33 +86,31 @@ flowchart LR
 ## Backend Communication & Authentication
 
 ### Base URL Configuration
+
 * **Axios Client**: Centralized API instance configured with `withCredentials: true` so the browser automatically handles cross-domain cookies with every request.
 * **Environment Setup**: Environment endpoints are managed via Vite using `VITE_API_BASE_URL`.
 
 ### Authentication Strategy & Silent Refresh
+
 * **In-Memory Access Token**: Short-lived JWT stored strictly in memory (React Context/state) to mitigate XSS risks. Attached to outbound API requests via an Axios interceptor using `Authorization: Bearer <token>`.
 * **Cross-Domain Session Handling**: Relies on browser-managed session cookies forwarded automatically on cross-domain requests without client-side JS manipulation.
 * **Silent Refresh**: An Axios response interceptor monitors `401 Unauthorized` responses to automatically trigger a background token renewal (`/auth/refresh`), retrying failed requests once a new token is set in memory.
 
 ### Cold Start / Server "Wake-Up" Strategy
+
 * **Cold-Start Handling**: Because the backend runs on a platform that spins down during periods of inactivity, initial requests may experience cold-start latency.
 * **Initial Health Check**: On app boot, the frontend issues a preliminary ping to the backend to wake up the server instance before the user executes critical operations.
 * **Resilience & Retries**: Displays a global loading state during boot and handles initial connection delays or transient `503 Service Unavailable` responses until the server is fully warm.
 
-### Environment Variables
-Create a `.env` or `.env.local` file in the root directory:
-
-```env
-VITE_API_BASE_URL=https://your-backend-api.com
-```
-
 ## Key Technical Decisions
 
 ### 1. Form State via Custom Reducer Hook (`useReclamoForm`)
+
 * **The "Why"**: The *Reclamos* module is the core domain of the platform. The form is highly domain-specific, featuring interdependent steps, conditional logic, dynamic document templates, and contextual validations. Instead of adding a heavy form library (e.g., `react-hook-form` or `formik`), a custom `useReducer` hook (`useReclamoForm`) was chosen to centralize complex state transitions into predictable, unit-testable action dispatches (`SET_FIELD`, `SUBMIT_START`, `SET_ERRORS`).
 * **The Trade-off**: Writing custom validation schema evaluation, dirty-state tracking, and nested field updates requires more boilerplate and manual effort to prevent unnecessary re-renders. However, it eliminated external abstractions, providing fine-grained control over edge cases without fighting third-party form library mechanics.
 
 ### 2. Tiptap + Custom Document-to-PDF Pipeline
+
 * **Why Tiptap**: Claim processing requires dynamic legal/administrative document generation. Tiptap (headless, built on ProseMirror) was selected because it decoupled rich text editing logic from UI constraints, making it easy to seamlessly embed custom placeholders, metadata tokens, and structured document structures into the editor.
 * **Unidirectional Sync (Document ➔ `useReclamoForm`)**: 
   * The integration between the Tiptap editor and the form reducer operates **unidirectionally**. 
@@ -120,18 +118,23 @@ VITE_API_BASE_URL=https://your-backend-api.com
 * **PDF Pipeline**: Once verified, the document string is used to generate a PDF document using a dedicated server/client generation strategy that preserves formatting without breaking layout fidelity.
 
 ### 3. Onboarding Tour: Migration from `react-joyride` to `driver.js`
+
 * **The React 19 Compatibility Wall**: `react-joyride` (and its underlying dependency `react-floater`) relied on legacy React internals and lifecycle methods that failed or produced runtime crashes/warnings when upgrading the project to React 19.
 * **The Fix (`driver.js`)**: `driver.js` is framework-agnostic, lightweight, and operates directly on DOM elements rather than forcing deep React fiber integration. By wrapping `driver.js` in a lightweight custom React hook, the application achieved flawless element highlighting, step popovers, and smooth tour progression under React 19 with zero compatibility overhead.
 * **Persistence via `localStorage`**: To keep the onboarding non-intrusive, completed or dismissed tours persist flag markers in `localStorage`, allowing user-guided interactive tours without storing UI tour state on the database.
 
 ### 4. Dynamic PDF Generation for Claim Resolutions
+
 * **The "Why"**: Settlement and failure documents can't be generated from a single static template. Content and layout must adapt to the resolution type and to the number and type of parties involved in each claim, since a claim may resolve with one or several claimants and respondents, each requiring their own section in the document.
 * **Conditional Signature Lines**: The PDF footer renders a signature line for each party and for each party's sponsoring counsel, but only when that person was physically present at the hearing. Presence is evaluated per person with the same rule: a party or a counsel is considered absent, and excluded from the signature lines, if either a WhatsApp number is registered for them or their non-appearance checkbox (*"Incomparece"*) is checked; the signature line appears only when neither condition is met. The document is therefore derived from data the conciliator already records during the hearing, so the right signature lines appear without a separate attendance step.
 * **Pipeline**: Once the claim data and document content are validated, they're passed through a dedicated server/client generation strategy (see Tiptap integration above) that assembles the correct template variant and preserves formatting without breaking layout fidelity.
 
 ### 5. Other Non-Obvious Architecture Choices
+
 * **Entity Repositories over Direct Fetching**: API interaction is encapsulated within dedicated repository modules per entity (e.g., `ReclamosRepository`, `ConciliacionesRepository`). This decouples data fetching, caching, and transformation from React UI components, keeping CRUD operations reusable and dry across different views.
 * **Entity-Coupled Validation Components**: Validation rules and UI inputs are tightly bound to domain entity components. While this optimized rapid iteration and direct feature building, it relies on disciplined repository patterns to prevent business logic duplication across forms.
+
+*For the full story of the project, including the backend decisions on authentication, data isolation and infrastructure, see the [case study](<url>) and the [backend repository](https://github.com/leoariaspaz/rivendel).*
 
 ## Features
 
@@ -212,9 +215,11 @@ rivendel-client/
 ## Getting Started
 
 ### Prerequisites
+
 - Node version, package manager
 
 ### Installation
+
 ```bash
 git clone <repo>
 cd <repo>
@@ -222,9 +227,15 @@ pnpm install
 ```
 
 ### Environment Variables
-`VITE_BACKEND_URL=`
+
+The frontend reads a single environment variable. Define it in a `.env.local` file at the project root for local development; in production it is set in the hosting provider's environment settings (Vercel).
+
+```bash
+VITE_BACKEND_URL=   # base URL of the backend API (e.g. http://localhost:<port> locally)
+```
 
 ### Running locally
+
 ```bash
 pnpm dev
 ```
