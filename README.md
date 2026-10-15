@@ -216,7 +216,7 @@ rivendel-client/
 
 ### Prerequisites
 
-- Node version, package manager
+- Node.js 24.11.1, pnpm
 
 ### Installation
 
