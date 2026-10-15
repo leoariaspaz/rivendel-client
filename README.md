@@ -1,5 +1,7 @@
 # Conciliaciones — Frontend
 
+[![CI](https://github.com/leoariaspaz/rivendel-client/actions/workflows/ci.yml/badge.svg)](https://github.com/leoariaspaz/rivendel-client/actions/workflows/ci.yml)<sup> Latest CI run (lint and tests).</sup>
+
 Client for Rivendel, a case management platform for labor conciliators designated under DICLO (Dirección de Conciliación Laboral Obligatoria) in Santiago del Estero, Argentina.
 [Backend repo](https://github.com/leoariaspaz/rivendel) · [Case study](https://github.com/leoariaspaz/leoariaspaz/blob/main/doc/case-studies/conciliaciones.md)
 
