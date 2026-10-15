@@ -1,7 +1,7 @@
 # Conciliaciones — Frontend
 
 Client for Rivendel, a case management platform for labor conciliators designated under DICLO (Dirección de Conciliación Laboral Obligatoria) in Santiago del Estero, Argentina.
-[Backend repo](https://github.com/leoariaspaz/rivendel) · [Case study](<url>)
+[Backend repo](https://github.com/leoariaspaz/rivendel) · [Case study](https://github.com/leoariaspaz/leoariaspaz/blob/main/doc/case-studies/conciliaciones.md)
 
 ## Live Demo
 
@@ -134,7 +134,7 @@ flowchart LR
 * **Entity Repositories over Direct Fetching**: API interaction is encapsulated within dedicated repository modules per entity (e.g., `ReclamosRepository`, `ConciliacionesRepository`). This decouples data fetching, caching, and transformation from React UI components, keeping CRUD operations reusable and dry across different views.
 * **Entity-Coupled Validation Components**: Validation rules and UI inputs are tightly bound to domain entity components. While this optimized rapid iteration and direct feature building, it relies on disciplined repository patterns to prevent business logic duplication across forms.
 
-*For the full story of the project, including the backend decisions on authentication, data isolation and infrastructure, see the [case study](<url>) and the [backend repository](https://github.com/leoariaspaz/rivendel).*
+*For the full story of the project, including the backend decisions on authentication, data isolation and infrastructure, see the [case study](https://github.com/leoariaspaz/leoariaspaz/blob/main/doc/case-studies/conciliaciones.md) and the [backend repository](https://github.com/leoariaspaz/rivendel).*
 
 ## Features
 
