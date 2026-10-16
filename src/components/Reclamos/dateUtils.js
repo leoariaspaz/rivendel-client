@@ -27,7 +27,9 @@ export function isValidDateTime(dateTimeStr) {
 }
 
 export function isValidHour(hourStr) {
-  return dayjs(hourStr, 'HH:mm', true).isValid();
+  if (typeof hourStr !== 'string' || !/^\d{2}:\d{2}$/.test(hourStr)) return false;
+  const [hours, minutes] = hourStr.split(':').map(Number);
+  return hours < 24 && minutes < 60;
 }
 
 export const isChronological = (firstDate, secondDate) => {

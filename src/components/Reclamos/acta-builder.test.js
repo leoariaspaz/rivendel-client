@@ -1,13 +1,22 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { buildDocument } from "./acta-builder.js";
+import createActa, { buildDocument } from "./acta-builder.js";
 import { Reclamos } from "../../api/repositories/reclamos.js";
 import { ACUERDO, FRACASO } from "./tiposResoluciones.js";
+
+const pdfMocks = vi.hoisted(() => ({
+  createPdf: vi.fn(),
+  pdfMake: {},
+  vfs: { "LiberationSerif-Regular.ttf": "font-data" },
+}));
 
 vi.mock("../../api/repositories/reclamos.js", () => ({
   Reclamos: {
     get: vi.fn(),
   },
 }));
+
+vi.mock("pdfmake/build/pdfmake", () => ({ default: pdfMocks.pdfMake }));
+vi.mock("../../assets/vfs_fonts.js", () => ({ default: pdfMocks.vfs }));
 
 const parte = (nombre) => ({
   nombre,
@@ -109,5 +118,24 @@ describe("buildDocument", () => {
     expect(document.content[0].text).toBe(
       "Error: No se encontraron datos para el reclamo solicitado."
     );
+  });
+
+  it("configura las fuentes y abre el PDF generado", async () => {
+    const open = vi.fn(() => "opened");
+    pdfMocks.pdfMake.createPdf = pdfMocks.createPdf;
+    pdfMocks.createPdf.mockReturnValue({ open });
+    Reclamos.get.mockResolvedValue({ ok: true, data: reclamo() });
+
+    await expect(createActa(5)).resolves.toBe("opened");
+
+    expect(pdfMocks.pdfMake.vfs).toBe(pdfMocks.vfs);
+    expect(pdfMocks.pdfMake.fonts.Times).toEqual({
+      normal: "LiberationSerif-Regular.ttf",
+      bold: "LiberationSerif-Bold.ttf",
+      italics: "LiberationSerif-Italic.ttf",
+      bolditalics: "LiberationSerif-BoldItalic.ttf",
+    });
+    expect(pdfMocks.createPdf).toHaveBeenCalledWith(expect.objectContaining({ content: expect.any(Array) }));
+    expect(open).toHaveBeenCalledOnce();
   });
 });

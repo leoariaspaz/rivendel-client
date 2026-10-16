@@ -197,6 +197,7 @@ describe("<Form /> (Reclamos)", () => {
     expect(setErrors).toHaveBeenCalledWith([
       "Ingrese un número de reclamo válido",
       "Ingrese una fecha y hora de inicio válidas",
+      "Ingrese una hora de fin válida",
       "Seleccione una resolución válida",
     ]);
     expect(Reclamos.create).not.toHaveBeenCalled();
