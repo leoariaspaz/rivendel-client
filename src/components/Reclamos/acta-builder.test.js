@@ -9,21 +9,35 @@ vi.mock("../../api/repositories/reclamos.js", () => ({
   },
 }));
 
-vi.mock("./DTOs/reportData.js", () => ({
-  default: class MockReportData {
-    constructor(data) {
-      Object.assign(this, data, {
-        titulo: data.idResolucion === ACUERDO ? "ACUERDO CONCILIATORIO" : "FRACASO",
-        fechaInicio: { dia: "15", mes: "marzo", anio: 2026, hora: "10:00" },
-        horaFin: "11:00",
-        nombresReclamantes: "Ana",
-        nombresReclamados: "Empresa",
-        reclamantes: [],
-        reclamados: [],
-      });
-    }
+const parte = (nombre) => ({
+  nombre,
+  tipoDocumento: { sintetico: "DNI" },
+  nroDocumento: "123",
+  cuil: "20-12345678-9",
+  domicilio: "Calle 1",
+  localidad: "Rosario",
+  patrocinante: null,
+  incomparendoParte: false,
+});
+
+const reclamo = (overrides = {}) => ({
+  id: 5,
+  numero: 42,
+  idResolucion: ACUERDO,
+  fechaHoraInicio: "2026-03-15T10:00:00",
+  horaFin: "2026-03-15T11:00:00",
+  proximaAudiencia: null,
+  rubros: "Diferencias salariales",
+  conciliador: { nombre: "Laura Pérez", nroHabilitacion: 77 },
+  cantidad: 2,
+  clausulas: {
+    type: "doc",
+    content: [{ type: "paragraph", content: [{ type: "text", text: "Pago total" }] }],
   },
-}));
+  reclamantes: [parte("Ana López")],
+  reclamados: [parte("Empresa SA")],
+  ...overrides,
+});
 
 describe("buildDocument", () => {
   beforeEach(() => {
@@ -33,15 +47,7 @@ describe("buildDocument", () => {
   it("construye un documento de acuerdo con título y contenido", async () => {
     Reclamos.get.mockResolvedValue({
       ok: true,
-      data: {
-        id: 5,
-        numero: 42,
-        idResolucion: ACUERDO,
-        clausulas: { content: [{ type: "paragraph", content: [{ type: "text", text: "Cláusula" }] }] },
-        rubros: "Rubros",
-        reclamantes: [],
-        reclamados: [],
-      },
+      data: reclamo(),
     });
 
     const document = await buildDocument(5);
@@ -56,24 +62,32 @@ describe("buildDocument", () => {
       text: "ACUERDO CONCILIATORIO",
       style: "header",
     });
+    expect(document.content[0][2].text).toContain("DNI 123");
+    expect(document.content[0][2].text).toContain("Ana López");
+    expect(document.content[0][2].text).toContain("Empresa SA");
+    expect(document.content[0][2].text).toContain("Laura Pérez");
+    expect(document.content[0][3][0].text).toEqual([{ text: "Pago total" }]);
   });
 
   it("construye el documento de fracaso sin cláusulas de acuerdo", async () => {
     Reclamos.get.mockResolvedValue({
       ok: true,
-      data: {
+      data: reclamo({
         numero: 8,
         idResolucion: FRACASO,
         rubros: "Despido",
-        reclamantes: [],
-        reclamados: [],
-      },
+        clausulas: null,
+      }),
     });
 
     const document = await buildDocument(8);
 
-    expect(document.content[0][0]).toMatchObject({ text: "FRACASO", style: "header" });
-    expect(document.content[0]).toHaveLength(4);
+    expect(document.content[0][0]).toMatchObject({
+      text: "CERTIFICACIÓN DE FRACASO RECLAMO 8",
+      style: "header",
+    });
+    expect(document.content[0][2].text[1].text).toBe("Despido");
+    expect(document.content[0][3].text).toContain("no es posible arribar a un acuerdo conciliatorio");
   });
 
   it("genera un documento de error si falla la carga", async () => {

@@ -166,6 +166,7 @@ const Grid = ({ columnBuilder, recordsPerPage = RECORDS_PER_PAGE, headers = [],
       <div className="col-7 col-offset-2">
         <div className="position-relative">
           <input id="criterio" type="text" className="form-control border-primary-subtle rounded-4 ps-5"
+            aria-label={searchPlaceHolder}
             placeholder={searchPlaceHolder} autoComplete="off" value={userInput}
             onChange={handleChange} onKeyDown={handleKeyDown}
           />
