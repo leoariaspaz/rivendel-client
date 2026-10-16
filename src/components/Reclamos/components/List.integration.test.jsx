@@ -65,7 +65,7 @@ describe("reclamos list integration", () => {
 		expect(screen.getByText(/Nº\s*42/)).toBeInTheDocument();
 	});
 
-	it.fails("detecta un salto de niveles en los encabezados de la tarjeta del reclamo", async () => {
+	it("no presenta violaciones axe en la jerarquía de encabezados", async () => {
 		installSearchHandler();
 		const { container } = renderList();
 

@@ -43,7 +43,7 @@ export default function ListCell(rec, onDeleteRecord) {
 						<div className="col-11">
 							<div className="row">
 								<div className="col-2 d-flex align-items-center text-success">
-									<h3 className="fw-bold">Nº {rec.numero}</h3>
+									<div className="h3 fw-bold mb-2">Nº {rec.numero}</div>
 								</div>
 								<div className="col-6 d-flex align-items-center small">
 									<span>{dayjs(rec.fechaHoraInicio).format("DD [de] MMMM [de] YYYY - HH:mm [hs]")}</span>
@@ -64,13 +64,13 @@ export default function ListCell(rec, onDeleteRecord) {
 							</div>
 							<div className="row">
 								<div className="col-6 border border-secondary-subtle rounded p-2">
-									<h6>Reclamantes</h6>
+									<div className="h6 mb-2">Reclamantes</div>
 									<span>
 										{rec.partes.filter(p => p.rol === RECLAMANTE).map((r) => r.parte.nombre).join(", ")}
 									</span>
 								</div>
 								<div className="col-6 border border-secondary-subtle rounded p-2">
-									<h6>Reclamados</h6>
+									<div className="h6 mb-2">Reclamados</div>
 									<span>
 										{rec.partes.filter(p => p.rol === RECLAMADO).map((r) => r.parte.nombre).join(", ")}
 									</span>
