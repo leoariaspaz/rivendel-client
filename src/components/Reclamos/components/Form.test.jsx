@@ -1,6 +1,7 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import userEvent from "@testing-library/user-event";
 import Form from "./Form.jsx";
 import { handleOnChange, handleSubmit } from "../eventHandlers.utils.js";
 import useReclamoForm from "../hooks/useReclamoForm.js";
@@ -129,6 +130,19 @@ const HookHarness = () => {
   );
 };
 
+const AudienceHarness = () => {
+  const { state, setField } = useReclamoForm();
+
+  return (
+    <>
+      <output aria-label="Próxima audiencia">{state.proxAudiencia}</output>
+      <button type="button" onClick={() => setField("idResolucion", POSTERGADO)}>Postergar</button>
+      <button type="button" onClick={() => setField("proxAudiencia", "2026-04-10T10:00")}>Fijar audiencia</button>
+      <button type="button" onClick={() => setField("idResolucion", PENDIENTE)}>Resolver</button>
+    </>
+  );
+};
+
 describe("<Form /> (Reclamos)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -183,6 +197,7 @@ describe("<Form /> (Reclamos)", () => {
     expect(setErrors).toHaveBeenCalledWith([
       "Ingrese un número de reclamo válido",
       "Ingrese una fecha y hora de inicio válidas",
+      "Ingrese una hora de fin válida",
       "Seleccione una resolución válida",
     ]);
     expect(Reclamos.create).not.toHaveBeenCalled();
@@ -291,14 +306,15 @@ describe("<Form /> (Reclamos)", () => {
   });
 
   it("limpia proxAudiencia cuando la resolución no es postergado", async () => {
-    const state = reducer(initialState, { type: "SET_FIELD", field: "idResolucion", value: 2 });
-    const next = reducer(state, {
-      type: "SET_FIELD",
-      field: "proxAudiencia",
-      value: "2026-04-10T10:00",
-    });
+    const user = userEvent.setup();
+    render(<AudienceHarness />);
 
-    expect(next.proxAudiencia).toBe("2026-04-10T10:00");
+    await user.click(screen.getByRole("button", { name: "Postergar" }));
+    await user.click(screen.getByRole("button", { name: "Fijar audiencia" }));
+    expect(screen.getByLabelText("Próxima audiencia")).toHaveTextContent("2026-04-10T10:00");
+
+    await user.click(screen.getByRole("button", { name: "Resolver" }));
+    expect(screen.getByLabelText("Próxima audiencia")).toBeEmptyDOMElement();
   });
 
   it("valida que la próxima audiencia sea obligatoria cuando la resolución es postergado", () => {

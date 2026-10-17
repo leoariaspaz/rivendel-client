@@ -47,7 +47,8 @@ The app is built as an administrative CRM/management platform for conciliations.
 - **Local state**: stores simples en módulos + contextos React
 - **Notifications**: `react-toastify`
 - **Utilities**: `dayjs`, `date-fns`, `driver.js`
-- **Test**: `vitest` + `@testing-library/react` + `@testing-library/jest-dom`
+- **Test**: `vitest` + `@testing-library/react` + `@testing-library/user-event` + `@testing-library/jest-dom`
+- **API & accessibility tests**: MSW + `vitest-axe`
 - **Lint**: ESLint + plugin React + React Hooks + Prettier
 
 ## Architecture
@@ -204,6 +205,8 @@ rivendel-client/
 │  ├─ main.jsx                         # App bootstrap and routes
 │  ├─ setupTests.js                    # Global test configuration
 │  └─ index.css                        # Global CSS
+├─ test/
+│  └─ msw/                              # Shared Mock Service Worker handlers/server
 ├─ .env.local / .env.production         # Environment variables
 ├─ eslint.config.js                     # ESLint
 ├─ index.html                           # Vite base HTML
@@ -245,19 +248,21 @@ pnpm dev
 
 ## Testing
 
-The test suite (58 files) covers three levels, all run with **Vitest** in a `jsdom` environment:
-- **Unit tests:** functions, utilities, stores, services and repositories, tested in isolation.
-- **Component tests:** React components and hooks via Testing Library, including forms, routes and dialogs.
-- **UI integration tests:** interactions between components and in-app flows; repositories/API calls are mocked, so these don't hit the real  backend.
+The test suite (65 files, 292 test cases) runs with **Vitest** in a `jsdom` environment:
+- **Unit tests:** domain functions, reducers, date/time validation, document generation, stores, services and repository HTTP contracts.
+- **Component and hook tests:** React components and hooks via Testing Library, using accessible role/label queries and `userEvent` for user interactions.
+- **UI/API integration tests:** MSW intercepts HTTP while real repositories and selected flows (such as claim search/listing) run through the application. Shared handlers live in `test/msw/`.
+- **Accessibility checks:** `vitest-axe` checks the search dialog and claim listing.
 
-There's currently no E2E suite (e.g. Playwright/Cypress) running against a real browser.
+There is currently no browser-based E2E suite (e.g. Playwright/Cypress). The claim listing's card labels use Bootstrap heading styles on non-heading elements so they do not introduce skipped levels into the page's semantic heading outline.
 
-**Coverage:** 86% statements · 82% functions · 86% lines · 75% branches
+**Latest coverage:** 90.71% statements · 90.17% functions · 90.69% lines · 80.30% branches. The latest test run reports 292 passing tests and no expected failures.
 
 ```bash
-pnpm test           # run once
-pnpm test:watch     # watch mode
-pnpm test -- --coverage   # generate coverage report
+pnpm test                         # run once
+pnpm test:watch                   # watch mode
+pnpm vitest run --coverage        # run once and generate coverage
+pnpm lint                         # lint the application and tests
 ```
 
 ## Related Repository

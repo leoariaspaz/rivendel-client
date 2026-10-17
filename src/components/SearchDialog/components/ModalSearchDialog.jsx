@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useId, useRef } from 'react';
 import { SEARCH } from '../../Shared/components/Icons';
 import useSearchDialog from '../hooks/useSearchDialog';
 import { handleKeyDown } from '../event-handlers';
@@ -19,6 +19,7 @@ export default function ModalSearchDialog({
 }) {
 
 	const inputRef = useRef(null);
+	const titleId = useId();
 
 	const {term, data, selected, selectedId, done, error, loading,
 		setTerm, selectRow, buscar} = useSearchDialog(searchFn, inputRef, { minTermLength, debounceMs });
@@ -32,11 +33,12 @@ export default function ModalSearchDialog({
 
 	return (
 		<div className="modal show modal-backdrop-50 dialog-centered d-flex" tabIndex="-1"
+			role="dialog" aria-modal="true" aria-labelledby={titleId}
 			onKeyDown={(e) => handleKeyDown(e, buscar, onCancel) }>
 			<div className="modal-dialog center-vertical min-vw-100">
 				<div className="modal-content w-50">
 					<div className="modal-header bg-success text-white">
-						<h5 className="modal-title">{title}</h5>
+						<h5 className="modal-title" id={titleId}>{title}</h5>
 					</div>
 					<div className="modal-body">
 						<div className="row mb-3">
@@ -46,6 +48,7 @@ export default function ModalSearchDialog({
 									type="text"
 									className="form-control"
 									placeholder={placeholder}
+									aria-label={placeholder || title}
 									autoComplete="off"
 									value={term}
 									onChange={(e) => setTerm(e.target.value)}
@@ -53,7 +56,7 @@ export default function ModalSearchDialog({
 								/>
 							</div>
 							<div className="col-1">
-								<button type="button" className="btn btn-outline-primary" onClick={buscar}>
+								<button type="button" className="btn btn-outline-primary" onClick={buscar} aria-label="Buscar">
 									{SEARCH}
 								</button>
 							</div>

@@ -1,5 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { axe } from "vitest-axe";
 import ModalSearchDialog from "./ModalSearchDialog.jsx";
 
 const rows = [
@@ -53,56 +55,55 @@ describe("<ModalSearchDialog />", () => {
     expect(
       screen.getByRole("heading", { name: "Buscar parte" })
     ).toBeInTheDocument();
-    expect(screen.getByPlaceholderText("Nombre o CUIL")).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: "Buscar parte" })).toBeInTheDocument();
+    expect(screen.getByRole("textbox", { name: "Nombre o CUIL" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Buscar" })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Aceptar" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Cancelar" })).toBeInTheDocument();
   });
 
   it("busca, selecciona un resultado y lo acepta", async () => {
+    const user = userEvent.setup();
     const { searchFn, onAccept } = renderDialog();
-    const input = screen.getByPlaceholderText("Nombre o CUIL");
-    const searchButton = document.querySelector(".modal-body button");
+    const input = screen.getByRole("textbox", { name: "Nombre o CUIL" });
 
-    fireEvent.change(input, { target: { value: "ana" } });
-    fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
+    await user.type(input, "ana");
+    await user.click(screen.getByRole("button", { name: "Aceptar" }));
     expect(onAccept).not.toHaveBeenCalled();
 
-    fireEvent.click(searchButton);
+    await user.click(screen.getByRole("button", { name: "Buscar" }));
     await waitFor(() => expect(searchFn).toHaveBeenCalledWith("ana"));
     await waitFor(() => expect(screen.getByText("Ana")).toBeInTheDocument());
 
-    await act(async () => {
-      fireEvent.click(screen.getByText("Ana"));
-    });
+    await act(async () => user.click(screen.getByText("Ana")));
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: "Aceptar" })).toBeEnabled();
     });
 
-    fireEvent.click(screen.getByRole("button", { name: "Aceptar" }));
+    await user.click(screen.getByRole("button", { name: "Aceptar" }));
 
     expect(onAccept).toHaveBeenCalledTimes(1);
     expect(onAccept.mock.calls[0][1]).toEqual(rows[0]);
   });
 
-  it("cancela mediante botón y Escape", () => {
+  it("cancela mediante botón y Escape", async () => {
+    const user = userEvent.setup();
     const { onCancel } = renderDialog();
 
-    fireEvent.click(screen.getByRole("button", { name: "Cancelar" }));
-    fireEvent.keyDown(document.querySelector(".modal"), { key: "Escape" });
+    await user.click(screen.getByRole("button", { name: "Cancelar" }));
+    await user.keyboard("{Escape}");
 
     expect(onCancel).toHaveBeenCalledTimes(2);
   });
 
   it("muestra el error devuelto por la búsqueda", async () => {
+    const user = userEvent.setup();
     const searchFn = vi.fn().mockResolvedValue({ ok: false, error: "500" });
     renderDialog({ searchFn });
-    const searchButton = document.querySelector(".modal-body button");
 
-    fireEvent.change(screen.getByPlaceholderText("Nombre o CUIL"), {
-      target: { value: "ana" },
-    });
-    fireEvent.click(searchButton);
+    await user.type(screen.getByRole("textbox", { name: "Nombre o CUIL" }), "ana");
+    await user.click(screen.getByRole("button", { name: "Buscar" }));
 
     await waitFor(() => {
       expect(
@@ -111,5 +112,11 @@ describe("<ModalSearchDialog />", () => {
         )
       ).toBeInTheDocument();
     });
+  });
+
+  it("no presenta violaciones axe al abrirse", async () => {
+    const { container } = renderDialog();
+
+    expect(await axe(container)).toHaveNoViolations();
   });
 });
