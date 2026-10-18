@@ -37,7 +37,15 @@ function concatenatePartes(partes, esReclamado, cantidadReclamos) {
     const localidad = parte.localidad || '';
     const patrocinante = parte.patrocinante || {};
 
-    s += ((i === 0)? '' : ', ') + nombre;
+    if (i === partes.length - 1 && partes.length > 1) {
+      s += ' y ';
+    } else if (i > 0) {
+      s += ', ';
+    }
+
+    s += nombre;
+
+    //s += ((i === 0)? '' : ', ') + nombre;
 
     if (nroDocumento !== NO_ESPECIFICADO) {
       s += ` ${sintetico} ${nroDocumento}`;
@@ -88,13 +96,6 @@ function concatenatePartes(partes, esReclamado, cantidadReclamos) {
 
     if (parte.incomparendoParte && cantidadReclamos) {
       s += ` quien fue notificada de las ${cantidadReclamos} fechas de audiencia de conciliación, según informe suministrado por la DICLO.`;
-    }
-
-    if (parte.multado) {
-      s +=
-        '.\nAsimismo se solicita la aplicación de la multa establecida  en el Artículo 8°, del Anexo II de la Ley Nacional ' +
-        'N° 25.212 Régimen General de Sanciones por Infracciones Laborales por ser considerada la conducta de la patronal ' +
-        'como obstructiva y, como tal, sancionable de conformidad a la  normativa nombrada anteriormente.';
     }
   });
 
