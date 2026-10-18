@@ -94,6 +94,7 @@ function getMultas(data) {
   let s = '';
   const reclamantesMultados = (data?.reclamantes || []).filter(p => p.multado).length;
   const reclamadosMultados = (data?.reclamados || []).filter(p => p.multado).length;
+  
   if ((reclamantesMultados + reclamadosMultados) === 0) return '';
 
   let partesMultadas = '';
