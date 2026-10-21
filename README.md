@@ -248,7 +248,7 @@ pnpm dev
 
 ## Testing
 
-The test suite (65 files, 292 test cases) runs with **Vitest** in a `jsdom` environment:
+The test suite runs with **Vitest** in a `jsdom` environment:
 - **Unit tests:** domain functions, reducers, date/time validation, document generation, stores, services and repository HTTP contracts.
 - **Component and hook tests:** React components and hooks via Testing Library, using accessible role/label queries and `userEvent` for user interactions.
 - **UI/API integration tests:** MSW intercepts HTTP while real repositories and selected flows (such as claim search/listing) run through the application. Shared handlers live in `test/msw/`.
@@ -256,7 +256,7 @@ The test suite (65 files, 292 test cases) runs with **Vitest** in a `jsdom` envi
 
 There is currently no browser-based E2E suite (e.g. Playwright/Cypress). The claim listing's card labels use Bootstrap heading styles on non-heading elements so they do not introduce skipped levels into the page's semantic heading outline.
 
-**Latest coverage:** 90.71% statements · 90.17% functions · 90.69% lines · 80.30% branches. The latest test run reports 292 passing tests and no expected failures.
+**Coverage:** The latest test run reports all passing tests without expected failures. Threshold: statements: 90%, branches: 80%, functions: 90%, lines: 90%.
 
 ```bash
 pnpm test                         # run once

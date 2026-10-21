@@ -18,7 +18,7 @@ const titulo = (data) => ({
   style: 'header',
 })
 
-function reclamantes(data) {
+function partes(data) {
   const row = (value, label) => ({
     columns: [
       { text: label, width: 70 },
@@ -88,6 +88,32 @@ function getFinalizacion(data) {
   );
 };
 
+function getMultas(data) {
+  if (data.idResolucion === ACUERDO) return '';
+
+  let s = '';
+  const reclamantesMultados = (data?.reclamantes || []).filter(p => p.multado).length;
+  const reclamadosMultados = (data?.reclamados || []).filter(p => p.multado).length;
+  
+  if ((reclamantesMultados + reclamadosMultados) === 0) return '';
+
+  let partesMultadas = '';
+  if (reclamantesMultados > 0) {
+    partesMultadas = 'el empleado'
+  }
+  if (reclamadosMultados > 0) {
+    partesMultadas += (partesMultadas?.length > 0)? ' y ' : '' + 'la patronal'
+  }
+
+  s +=
+    'Asimismo se solicita para las partes que no comparecieron la aplicación de la multa establecida  ' +
+    ' en el Artículo 8°, del Anexo II de la Ley Nacional N° 25.212 Régimen General de Sanciones por' + 
+    ' Infracciones Laborales por ser considerada la conducta de ' + partesMultadas + ' como obstructiva' + 
+    ' y, como tal, sancionable de conformidad a la  normativa nombrada anteriormente.';
+
+  return s;
+}
+
 function cuerpo(data) {
   let s =
     `En la ciudad de Santiago del Estero, provincia del mismo nombre, a los ${data?.fechaInicio.dia} días ` +
@@ -95,6 +121,10 @@ function cuerpo(data) {
     `horas, ante mí ${data.conciliador}, en mi calidad de Conciliador Laboral, habilitación Nº ${data.nroHabilitacion}, en ` +
     `ejercicio de las funciones conferidas por la ley 7.330 y el decreto reglamentario 2.230/22. En el Marco del ` +
     `trámite de referencia, comparecen ${joinPartes(data, PRESENCIALES)}.- Y ABIERTO EL ACTO: ${getDeclaracion(data)}`;
+  const multas = getMultas(data);
+  if (multas?.length > 0) {
+    s += `\n${getMultas(data)}`;
+  }
   s += `\n${getFinalizacion(data)}`;
   return {
     margin: [0, 0, 0, PARAGRAPH_SPACING_PT],
@@ -219,7 +249,7 @@ function content(data) {
   if (data.idResolucion === ACUERDO) {
     result.push([preTitulo(data), titulo(data), cuerpo(data), clausulas(data)]);
   } else {
-    result.push([titulo(data), reclamantes(data), rubros(data), cuerpo(data)]);
+    result.push([titulo(data), partes(data), rubros(data), cuerpo(data)]);
   }
   result.push(panelFirmas(data));
   return result;
