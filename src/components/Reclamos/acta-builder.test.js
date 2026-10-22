@@ -99,6 +99,21 @@ describe("buildDocument", () => {
     expect(document.content[0][3].text).toContain("no es posible arribar a un acuerdo conciliatorio");
   });
 
+  it("incluye ambas partes en la solicitud de multa cuando ambas fueron multadas", async () => {
+    Reclamos.get.mockResolvedValue({
+      ok: true,
+      data: reclamo({
+        idResolucion: FRACASO,
+        reclamantes: [parte("Ana López"), { ...parte("Luis Pérez"), multado: true }],
+        reclamados: [{ ...parte("Empresa SA"), multado: true }],
+      }),
+    });
+
+    const document = await buildDocument(42);
+
+    expect(document.content[0][3].text).toContain("el empleado y la patronal");
+  });
+
   it("genera un documento de error si falla la carga", async () => {
     Reclamos.get.mockResolvedValue({ ok: false, error: "Error de backend" });
 

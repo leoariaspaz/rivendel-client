@@ -18,13 +18,12 @@ export default defineConfig({
     globals: true,
     setupFiles: ['./src/setupTests.js'],
     coverage: {
-      threshold: {
-        global: {
-          statements: 90,
-          branches: 80,
-          functions: 90,
-          lines: 90,
-        },
+      provider: 'v8',
+      thresholds: {
+        statements: 90,
+        branches: 80,
+        functions: 90,
+        lines: 90,
       },
     },
   },
