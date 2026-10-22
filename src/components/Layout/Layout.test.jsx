@@ -7,6 +7,11 @@ import { safeNavigate } from "../../utils/navigation.js";
 import NotificationProvider from "../../contexts/NotificationProvider.jsx";
 import { toast } from "react-toastify";
 
+const tourMocks = vi.hoisted(() => ({
+  iniciarTour: vi.fn(),
+  getTourVisto: vi.fn(() => true),
+}));
+
 vi.mock("../../api/auth.repository", () => ({
   logout: vi.fn(),
 }));
@@ -37,15 +42,15 @@ vi.mock("react-toastify", () => ({
 
 vi.mock("./hooks/useTourInicial", () => ({
   useTourInicial: () => ({
-    iniciarTour: vi.fn(),
-    getTourVisto: vi.fn(() => true),
+    iniciarTour: tourMocks.iniciarTour,
+    getTourVisto: tourMocks.getTourVisto,
   }),
 }));
 
-const renderLayout = () =>
+const renderLayout = (initialPath = "/") =>
   render(
     <NotificationProvider>
-      <MemoryRouter>
+      <MemoryRouter initialEntries={[initialPath]}>
         <Layout>
           <div>Contenido de prueba</div>
         </Layout>
@@ -57,6 +62,7 @@ describe("Layout", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     logout.mockResolvedValue();
+    tourMocks.getTourVisto.mockReturnValue(true);
   });
 
   it("renderiza navegación, usuario y contenido principal", () => {
@@ -68,6 +74,15 @@ describe("Layout", () => {
     expect(screen.getByText("Reclamos")).toBeInTheDocument();
     expect(screen.getByText("Contenido de prueba")).toBeInTheDocument();
     expect(screen.getByText("Usuario Actual")).toBeInTheDocument();
+  });
+
+  it("marca la ruta actual y comienza el tour si todavía no fue visto", async () => {
+    tourMocks.getTourVisto.mockReturnValueOnce(false);
+
+    renderLayout("/partes");
+
+    expect(screen.getByRole("link", { name: "Partes" })).toHaveClass("active");
+    await waitFor(() => expect(tourMocks.iniciarTour).toHaveBeenCalledOnce());
   });
 
   it("cierra sesión y navega a la ruta raíz con replace", async () => {

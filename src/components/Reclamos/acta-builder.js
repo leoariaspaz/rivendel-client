@@ -102,7 +102,7 @@ function getMultas(data) {
     partesMultadas = 'el empleado'
   }
   if (reclamadosMultados > 0) {
-    partesMultadas += (partesMultadas?.length > 0)? ' y ' : '' + 'la patronal'
+    partesMultadas += (partesMultadas.length > 0 ? ' y ' : '') + 'la patronal'
   }
 
   s +=

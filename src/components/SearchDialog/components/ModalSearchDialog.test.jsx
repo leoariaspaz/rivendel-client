@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { act, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { axe } from "vitest-axe";
 import ModalSearchDialog from "./ModalSearchDialog.jsx";
@@ -75,7 +75,7 @@ describe("<ModalSearchDialog />", () => {
     await waitFor(() => expect(searchFn).toHaveBeenCalledWith("ana"));
     await waitFor(() => expect(screen.getByText("Ana")).toBeInTheDocument());
 
-    await act(async () => user.click(screen.getByText("Ana")));
+    await user.click(screen.getByText("Ana"));
 
     await waitFor(() => {
       expect(screen.getByRole("button", { name: "Aceptar" })).toBeEnabled();

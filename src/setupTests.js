@@ -6,3 +6,4 @@ import "dayjs/locale/es";
 
 expect.extend(axeMatchers);
 dayjs.locale('es');
+HTMLCanvasElement.prototype.getContext = () => null;

@@ -16,6 +16,22 @@ describe('safeNavigate', () => {
     expect(dispatchSpy).toHaveBeenCalledWith(expect.any(PopStateEvent));
   });
 
+  it('agrega una barra inicial a rutas relativas sin barra', () => {
+    const pushStateSpy = vi.spyOn(window.history, 'pushState');
+
+    safeNavigate('reclamos');
+
+    expect(pushStateSpy).toHaveBeenCalledWith({}, '', '/reclamos');
+  });
+
+  it('usa el pathname de una URL HTTP externa', () => {
+    const pushStateSpy = vi.spyOn(window.history, 'pushState');
+
+    safeNavigate('https://example.com/reclamos');
+
+    expect(pushStateSpy).toHaveBeenCalledWith({}, '', '/reclamos');
+  });
+
   it('usa replaceState para redirecciones de salida', () => {
     const replaceStateSpy = vi.spyOn(window.history, 'replaceState');
 
