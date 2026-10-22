@@ -91,8 +91,8 @@ describe("<Grid />", () => {
     const findAll = vi.fn().mockResolvedValue({ ok: false, error: "No se pudo buscar" });
     renderGrid({ findAll });
 
-    await waitFor(() => expect(screen.getByText("No hay datos para mostrar")).toBeInTheDocument());
-    expect(showError).toHaveBeenCalledWith("No se pudo buscar");
+    await waitFor(() => expect(showError).toHaveBeenCalledWith("No se pudo buscar"));
+    expect(screen.getByText("No hay datos para mostrar")).toBeInTheDocument();
   });
 
   it("filtra por búsqueda después del debounce", async () => {
